@@ -1,5 +1,5 @@
 {
-  "build": { "builder": "NIXPACKS" },
+  "build": { "builder": "DOCKERFILE", "dockerfilePath": "scraper/Dockerfile" },
   "deploy": {
     "cronSchedule": "*/30 * * * *",
     "startCommand": "python run_scraper.py"
