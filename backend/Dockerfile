@@ -1,5 +1,8 @@
 FROM node:20-alpine
 
+# Prisma engine requires OpenSSL on Alpine
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # Install dependencies (paths relative to repo root — Docker build context)
