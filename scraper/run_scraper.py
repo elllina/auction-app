@@ -2,6 +2,7 @@ import os
 import sys
 from datetime import datetime
 from dotenv import load_dotenv
+import psycopg2
 
 load_dotenv()
 
@@ -36,6 +37,18 @@ def get_proxy_config() -> dict | None:
         'pass': PROXY_PASS,
     }
 
+
+def test_db_connection() -> bool:
+    """Test PostgreSQL connection on startup."""
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        conn.close()
+        log('DB connected')
+        return True
+    except Exception as e:
+        log(f'DB connection ERROR: {e}')
+        return False
+
 # ── Scrapers ─────────────────────────────────────────────────────────────────
 
 def scrape_copart() -> int:
@@ -65,6 +78,11 @@ def main():
     log(f"Database: {DATABASE_URL.split('@')[-1]}")  # log host only, not credentials
     log(f"Proxy: {PROXY_HOST}:{PROXY_PORT}" if PROXY_HOST else "Proxy: none")
     log("=" * 50)
+
+    # Test DB connection before scraping
+    if not test_db_connection():
+        log("Aborting — cannot connect to database")
+        sys.exit(1)
 
     total = 0
 
