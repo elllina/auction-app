@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  watchlist WatchlistItem[]
+  bids      Bid[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Vehicle {
+  id           Int           @id @default(autoincrement())
+  externalId   String        @unique  // Lot number from Copart / IAAI
+  source       AuctionSource
+  vin          String?
+  year         Int?
+  make         String?
+  model        String?
+  trim         String?
+  odometer     Int?
+  condition    String?
+  primaryDamage String?
+  location     String?
+  saleDate     DateTime?
+  currentBid   Float?
+  buyNowPrice  Float?
+  images       String[]
+  rawData      Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  watchlistItems WatchlistItem[]
+  bids           Bid[]
+}
+
+enum AuctionSource {
+  COPART
+  IAAI
+}
+
+model WatchlistItem {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  vehicleId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vehicleId])
+}
+
+model Bid {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  vehicleId Int
+  amount    Float
+  status    BidStatus @default(PENDING)
+  placedAt  DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  OUTBID
+  WON
+  LOST
+}
