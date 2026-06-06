@@ -2,12 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install Python dependencies
-COPY scraper/requirements.txt ./
+# Paths are relative to /scraper (Railway root directory for this service)
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy scraper source
-COPY scraper/ ./
+COPY . ./
 
 # Env vars injected by Railway at runtime only — never at build time
 CMD ["python", "run_scraper.py"]
