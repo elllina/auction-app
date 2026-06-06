@@ -2,14 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies
-COPY package.json ./
+# Install dependencies (paths relative to repo root — Docker build context)
+COPY backend/package.json ./
 RUN npm install
 
-# Copy source and build
-COPY prisma ./prisma
-COPY tsconfig.json ./
-COPY src ./src
+# Copy source files and build
+COPY backend/prisma ./prisma
+COPY backend/tsconfig.json ./
+COPY backend/src ./src
 
 RUN npx prisma generate
 RUN npm run build
