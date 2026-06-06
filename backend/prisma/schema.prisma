@@ -8,43 +8,48 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  name        String?
+  companyName String?
+  country     String?
+  phone       String?
+  role        Role     @default(DEALER)
+  active      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   watchlist WatchlistItem[]
   bids      Bid[]
 }
 
 enum Role {
-  USER
+  DEALER
   ADMIN
+  SUPER_ADMIN
 }
 
 model Vehicle {
-  id           Int           @id @default(autoincrement())
-  externalId   String        @unique  // Lot number from Copart / IAAI
-  source       AuctionSource
-  vin          String?
-  year         Int?
-  make         String?
-  model        String?
-  trim         String?
-  odometer     Int?
-  condition    String?
+  id            Int           @id @default(autoincrement())
+  externalId    String        @unique
+  source        AuctionSource
+  vin           String?
+  year          Int?
+  make          String?
+  model         String?
+  trim          String?
+  odometer      Int?
+  condition     String?
   primaryDamage String?
-  location     String?
-  saleDate     DateTime?
-  currentBid   Float?
-  buyNowPrice  Float?
-  images       String[]
-  rawData      Json?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  location      String?
+  saleDate      DateTime?
+  currentBid    Float?
+  buyNowPrice   Float?
+  images        String[]
+  rawData       Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   watchlistItems WatchlistItem[]
   bids           Bid[]
@@ -68,7 +73,7 @@ model WatchlistItem {
 }
 
 model Bid {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   userId    Int
   vehicleId Int
   amount    Float

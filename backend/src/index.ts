@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import authRouter from './routes/auth';
 
 dotenv.config();
 
@@ -17,7 +18,6 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error(`CORS: origin ${origin} not allowed`));
@@ -29,9 +29,10 @@ app.use(express.json());
 
 // ── Routes ───────────────────────────────────────────────────────────────────
 
+app.use('/api/auth', authRouter);
+
 app.get('/health', async (_req, res) => {
   let dbStatus = 'disconnected';
-
   try {
     await prisma.$queryRaw`SELECT 1`;
     dbStatus = 'connected';
