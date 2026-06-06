@@ -16,4 +16,5 @@ RUN npm run build
 
 EXPOSE 3001
 
-CMD ["node", "dist/index.js"]
+# migrate deploy runs at container start when DATABASE_URL is available
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
